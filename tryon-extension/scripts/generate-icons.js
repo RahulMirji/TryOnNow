@@ -1,0 +1,37 @@
+// Simple script to create placeholder icon files
+// In production, replace these with actual PNG icons
+
+import { writeFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Create a simple 1x1 purple pixel PNG as placeholder
+// This is a minimal valid PNG file
+const createPlaceholderPng = () => {
+  // Minimal PNG with purple color
+  const png = Buffer.from([
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+    0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, // 1x1 dimensions
+    0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
+    0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41,
+    0x54, 0x08, 0xD7, 0x63, 0x68, 0x60, 0xF8, 0x0F,
+    0x00, 0x01, 0x04, 0x01, 0x00, 0x18, 0xDD, 0x8D,
+    0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
+    0x44, 0xAE, 0x42, 0x60, 0x82
+  ]);
+  return png;
+};
+
+const sizes = [16, 48, 128];
+const publicDir = resolve(__dirname, '..', 'public');
+
+sizes.forEach(size => {
+  const filename = `icon${size}.png`;
+  writeFileSync(resolve(publicDir, filename), createPlaceholderPng());
+  console.log(`Created ${filename}`);
+});
+
+console.log('Icons created! Replace with actual icons for production.');
