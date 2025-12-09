@@ -33,7 +33,30 @@ Deno.serve(async (req) => {
     const userPhotoBase64 = cleanBase64(user_photo);
     const productImageBase64 = cleanBase64(product_image);
 
-    const prompt = `Generate a photorealistic virtual try-on image. Take the person from the first image and show them wearing the clothing item from the second image. Keep the person's face, hair, body shape, pose, and background exactly as in the first image. Only replace their clothing with the garment from the second image. Make it look natural and realistic. The person's gender is ${gender}.`;
+    const prompt = `Generate a photorealistic virtual try-on image.
+
+INSTRUCTIONS:
+1. Take the person from the FIRST image (user photo) - preserve 100% of their identity:
+   - Keep their exact face, facial features, skin tone, hair style, and hair color
+   - Keep their exact body shape, pose, and posture
+   - Keep the original background and lighting
+
+2. Take the wearable item from the SECOND image (product) and apply it to the person:
+   - If it's CLOTHING (shirt, pants, dress, etc.): Replace only the relevant clothing while keeping everything else
+   - If it's EYEWEAR (sunglasses, glasses, specs): Add them to the person's face naturally
+   - If it's JEWELRY (necklace, earrings, bracelet, ring): Add them in the appropriate position
+   - If it's a WATCH: Add it to their wrist naturally
+   - If it's FOOTWEAR (shoes, sandals): Show them wearing it on their feet
+   - If it's ACCESSORIES (hat, cap, scarf, belt): Add them appropriately
+
+3. CRITICAL RULES:
+   - DO NOT change the person's face, expression, or identity in any way
+   - DO NOT change their pose or body position
+   - Make the wearable item look naturally worn/placed on the person
+   - Maintain realistic lighting, shadows, and proportions
+   - The result should look like a real photograph, not edited
+
+The person's gender is ${gender}. Generate a single high-quality photorealistic image.`;
 
     // Using gemini-2.0-flash-preview-image-generation (has better free tier quota)
     const response = await fetch(

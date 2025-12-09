@@ -183,10 +183,9 @@ export function getButtonInsertTarget(marketplace: Marketplace): { element: Elem
 
 export function isClothingProduct(title: string, keywords: string[]): boolean {
   const lowerTitle = title.toLowerCase();
-  return keywords.some(keyword => {
-    const regex = new RegExp(`\\b${keyword}s?\\b`, 'i');
-    return regex.test(lowerTitle);
-  });
+  // Use simple includes() - more permissive for compound words like "trackpants", "sweatshirt"
+  // This catches: "Trackpants" (contains "pant"), "Shortsleeve" (contains "short")
+  return keywords.some(keyword => lowerTitle.includes(keyword));
 }
 
 export function detectProductGender(title: string): 'male' | 'female' | null {

@@ -2,6 +2,21 @@ import React, { useState, useRef } from 'react';
 import { detectProductGender } from '../utils/marketplace';
 import { generateTryOn } from '../utils/api';
 
+// Accessories/jewelry/eyewear - skip gender mismatch warning for these
+const UNISEX_CATEGORIES = [
+  'watch', 'watches', 'smartwatch', 'wristwatch',
+  'sunglass', 'sunglasses', 'spectacle', 'specs', 'glasses', 'eyeglass', 'eyewear', 'frame', 'aviator', 'wayfarer', 'goggles',
+  'necklace', 'chain', 'pendant', 'earring', 'ring', 'bracelet', 'bangle', 'anklet', 'brooch', 'jewellery', 'jewelry', 'choker', 'studs',
+  'belt', 'tie', 'scarf', 'stole', 'shawl', 'muffler', 'glove', 'gloves', 'cap', 'hat', 'beanie', 'headband', 'bandana',
+  'handbag', 'purse', 'clutch', 'backpack', 'tote', 'crossbody', 'wallet',
+  'shoe', 'shoes', 'sneaker', 'sandal', 'boot', 'boots', 'loafer', 'slipper', 'footwear'
+];
+
+const isUnisexProduct = (title: string): boolean => {
+  const lowerTitle = title.toLowerCase();
+  return UNISEX_CATEGORIES.some(keyword => lowerTitle.includes(keyword));
+};
+
 interface TryOnModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -22,6 +37,7 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
   if (!isOpen) return null;
 
   const detectedGender = detectProductGender(productTitle);
+  const isUnisex = isUnisexProduct(productTitle);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,8 +69,8 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
       return;
     }
 
-    // Gender mismatch warning
-    if (detectedGender && detectedGender !== gender) {
+    // Gender mismatch warning - skip for unisex products (accessories, jewelry, eyewear, footwear)
+    if (detectedGender && detectedGender !== gender && !isUnisex) {
       const proceed = confirm(
         `⚡ Heads up: This appears to be ${detectedGender}'s clothing but you selected ${gender}. Result may not look realistic. Continue anyway?`
       );
