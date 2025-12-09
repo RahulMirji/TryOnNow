@@ -43,6 +43,13 @@ export async function generateTryOn(request: TryOnRequest): Promise<TryOnRespons
     const data = await response.json();
 
     if (!response.ok) {
+      // Handle rate limit error specifically
+      if (response.status === 429) {
+        return { 
+          success: false, 
+          error: data.message || `Daily limit of ${data.current_count || 30} try-ons reached. Please try again tomorrow.`
+        };
+      }
       return { success: false, error: data.error || "Failed to generate try-on" };
     }
 
