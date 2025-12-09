@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { detectProductGender } from '../utils/marketplace';
 import { generateTryOn } from '../utils/api';
 
@@ -38,6 +38,18 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
 
   const detectedGender = detectProductGender(productTitle);
   const isUnisex = isUnisexProduct(productTitle);
+
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('TryOnModal STATE:', {
+      hasUserPhoto: !!userPhoto,
+      userPhotoLength: userPhoto?.length || 0,
+      hasTryOnResult: !!tryOnResult,
+      tryOnResultLength: tryOnResult?.length || 0,
+      isProcessing,
+      progress
+    });
+  }, [userPhoto, tryOnResult, isProcessing, progress]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,13 +106,23 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
         gender: gender as 'male' | 'female',
       });
 
+      console.log('TryOnModal: API result received', {
+        success: result.success,
+        hasImage: !!result.image,
+        imageLength: result.image?.length || 0,
+        error: result.error
+      });
+
       if (result.success && result.image) {
+        console.log('TryOnModal: Setting try-on result image');
         setTryOnResult(result.image);
         setProgress(100);
       } else {
+        console.error('TryOnModal: No image in result', result);
         setError(result.error || '❌ Failed to generate try-on. Please try again.');
       }
     } catch (err) {
+      console.error('TryOnModal: Exception caught', err);
       setError('❌ Oops! Something went wrong. Please try again.');
     } finally {
       clearInterval(progressInterval);
@@ -190,8 +212,11 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
 
             {/* Result */}
             <div className="tryon-column">
-              <h3>Try-On Result</h3>
-              <div className="tryon-image-box tryon-result-box">
+              <h3>Try-On Result {tryOnResult ? '✅' : ''}</h3>
+              <div 
+                className="tryon-image-box tryon-result-box"
+                style={tryOnResult ? { borderColor: '#22c55e', borderWidth: '3px' } : {}}
+              >
                 {isProcessing ? (
                   <div className="tryon-loading">
                     <div className="tryon-progress-bar">
@@ -200,7 +225,16 @@ export function TryOnModal({ isOpen, onClose, productImages, productTitle }: Try
                     <span>Generating... {progress}%</span>
                   </div>
                 ) : tryOnResult ? (
-                  <img src={tryOnResult} alt="Try-on result" />
+                  <img 
+                    key={`result-${Date.now()}`} 
+                    src={tryOnResult} 
+                    alt="Try-on result"
+                    onLoad={() => console.log('TryOnModal: Result image loaded successfully, src length:', tryOnResult.length)}
+                    onError={(e) => {
+                      console.error('TryOnModal: Result image failed to load', e);
+                      console.error('TryOnModal: Image src prefix:', tryOnResult.substring(0, 100));
+                    }}
+                  />
                 ) : (
                   <div className="tryon-upload-placeholder">
                     <span>Result will appear here</span>
