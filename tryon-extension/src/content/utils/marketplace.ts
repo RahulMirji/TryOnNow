@@ -93,12 +93,15 @@ export function getButtonInsertTarget(marketplace: Marketplace): { element: Elem
 
 export function isClothingProduct(title: string, keywords: string[]): boolean {
   const lowerTitle = title.toLowerCase();
-  return keywords.some(keyword => lowerTitle.includes(keyword));
+  return keywords.some(keyword => {
+    const regex = new RegExp(`\\b${keyword}s?\\b`, 'i');
+    return regex.test(lowerTitle);
+  });
 }
 
 export function detectProductGender(title: string): 'male' | 'female' | null {
   const lowerTitle = title.toLowerCase();
-  if (/\b(women|woman|girl|female|ladies|lady)\b/.test(lowerTitle)) return 'female';
-  if (/\b(men|man|boy|male|gents)\b/.test(lowerTitle)) return 'male';
+  if (/\b(women|woman|girls?|female|ladies|lady)\b/.test(lowerTitle)) return 'female';
+  if (/\b(men|man|boys?|male|gents)\b/.test(lowerTitle)) return 'male';
   return null;
 }
