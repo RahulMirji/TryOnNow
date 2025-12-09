@@ -18,9 +18,30 @@ function injectTryOnButton() {
   if (!marketplace) return;
 
   const title = getProductTitle(marketplace);
-  if (!title || !isClothingProduct(title, CLOTHING_KEYWORDS)) {
-    console.log('TryOnNow: Not a clothing product');
-    return;
+  console.log('TryOnNow: Marketplace:', marketplace, 'Title:', title);
+  
+  // For Flipkart, be more lenient - if we can't detect title, still show button on product pages
+  if (marketplace === 'flipkart') {
+    // Check if this looks like a product page (has price, images, etc.)
+    const hasPrice = document.querySelector('[class*="Nx9bqj"], [class*="_30jeq3"], [class*="CEmiEU"]');
+    const hasImages = document.querySelector('img[src*="rukminim"]');
+    
+    if (!title && hasPrice && hasImages) {
+      console.log('TryOnNow: Flipkart product page detected via price/images');
+      // Continue without title check for Flipkart
+    } else if (!title) {
+      console.log('TryOnNow: No title found on Flipkart');
+      return;
+    } else if (!isClothingProduct(title, CLOTHING_KEYWORDS)) {
+      console.log('TryOnNow: Not a clothing product, title:', title);
+      return;
+    }
+  } else {
+    // Amazon - strict check
+    if (!title || !isClothingProduct(title, CLOTHING_KEYWORDS)) {
+      console.log('TryOnNow: Not a clothing product');
+      return;
+    }
   }
 
   // Check if button already exists
@@ -35,12 +56,20 @@ function injectTryOnButton() {
   // Create a wrapper div to ensure proper block-level stacking
   const wrapper = document.createElement('div');
   wrapper.id = 'tryon-now-wrapper';
-  wrapper.style.cssText = 'display: block; width: 100%; margin-top: 8px; margin-bottom: 8px; position: relative; z-index: 1;';
-
+  
   // Create the button
   const button = document.createElement('button');
   button.id = 'tryon-now-btn';
-  button.className = 'tryon-now-button';
+  
+  // Apply marketplace-specific styling
+  if (marketplace === 'flipkart') {
+    wrapper.className = 'tryon-wrapper-flipkart';
+    button.className = 'tryon-now-button tryon-now-button-flipkart';
+  } else {
+    wrapper.style.cssText = 'display: block; width: 100%; margin-top: 8px; margin-bottom: 8px; position: relative; z-index: 1;';
+    button.className = 'tryon-now-button';
+  }
+  
   button.innerHTML = `
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M12 2L2 7l10 5 10-5-10-5z"/>
