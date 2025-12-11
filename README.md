@@ -6,13 +6,13 @@ AI-powered virtual try-on for Amazon India & Flipkart. Upload your photo, select
 
 ## 🎥 Demo
 
-Watch the demo on YouTube: **[Add your YouTube link here]**
+[![Watch Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?logo=youtube)](https://youtu.be/x5eOayGw33g?si=1Le4AbQUZvbcO9zR)
 
 ---
 
 ## 🚀 Quick Install (Pre-built)
 
-1. **Download** `dist.zip` from the [releases](https://github.com/RahulMirji/TryOnNow/releases) or the `tryon-extension/dist.zip` file
+1. **Download** `dist.zip` from [Google Drive](https://drive.google.com/file/d/1AwLA2K9jxZfjuWG1p5bzkpSDd4_N3j4E/view)
 2. **Extract** the zip to a folder
 3. Open Chrome and go to `chrome://extensions/`
 4. Enable **Developer mode** (toggle in top-right)
