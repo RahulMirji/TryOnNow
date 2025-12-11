@@ -1,0 +1,7 @@
+{
+    "agent": "antigravity",
+    "mode": "agentic",
+    "settings": {
+        "auto_push": true
+    }
+}
