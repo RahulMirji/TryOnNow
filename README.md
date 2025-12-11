@@ -90,5 +90,4 @@ TryOnNow/
 | AI | Google Gemini API |
 
 ---
-
-**Made with ❤️ for hackathon**
+**Made with Gemini 3 Pro (High) with ❤️ Antigravity for hackathon**
