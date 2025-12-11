@@ -17,10 +17,8 @@ const detectMarketplace = (url: string): 'amazon' | 'flipkart' | null => {
 
 const isClothingProduct = (title: string, keywords: string[]): boolean => {
   const lowerTitle = title.toLowerCase();
-  return keywords.some(keyword => {
-    const regex = new RegExp(`\\b${keyword}s?\\b`, 'i');
-    return regex.test(lowerTitle);
-  });
+  // Simple includes check for compound words like "trackpants", "sweatshirt"
+  return keywords.some(keyword => lowerTitle.includes(keyword));
 };
 
 const detectProductGender = (title: string): 'male' | 'female' | null => {
@@ -30,10 +28,20 @@ const detectProductGender = (title: string): 'male' | 'female' | null => {
   return null;
 };
 
-const CLOTHING_KEYWORDS = [
+// Expanded wearable keywords - all items humans can wear
+const WEARABLE_KEYWORDS = [
+  // Clothing
   'shirt', 'tshirt', 't-shirt', 'dress', 'pant', 'pants', 'jeans', 'jacket',
   'skirt', 'top', 'kurta', 'saree', 'sari', 'kurti', 'lehenga', 'blazer',
-  'sweater', 'hoodie', 'coat', 'shorts', 'trouser', 'suit', 'ethnic', 'western'
+  'sweater', 'hoodie', 'coat', 'shorts', 'trouser', 'suit', 'ethnic', 'western',
+  // Footwear
+  'shoe', 'shoes', 'sneaker', 'sandal', 'heel', 'boot', 'loafer', 'slipper', 'footwear',
+  // Eyewear
+  'sunglass', 'sunglasses', 'spectacle', 'specs', 'glasses', 'eyewear',
+  // Jewelry & Watches
+  'necklace', 'earring', 'ring', 'bracelet', 'watch', 'jewelry', 'jewellery',
+  // Accessories
+  'belt', 'tie', 'scarf', 'cap', 'hat', 'handbag', 'purse', 'backpack'
 ];
 
 describe('Marketplace Detection', () => {
@@ -51,23 +59,56 @@ describe('Marketplace Detection', () => {
   });
 });
 
-describe('Clothing Product Detection', () => {
+describe('Wearable Product Detection', () => {
   it('should detect clothing products', () => {
-    expect(isClothingProduct('Men Cotton Shirt Blue', CLOTHING_KEYWORDS)).toBe(true);
-    expect(isClothingProduct('Women Denim Jeans', CLOTHING_KEYWORDS)).toBe(true);
-    expect(isClothingProduct('Casual T-Shirt for Men', CLOTHING_KEYWORDS)).toBe(true);
-    expect(isClothingProduct('Traditional Kurta Set', CLOTHING_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Men Cotton Shirt Blue', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Women Denim Jeans', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Casual T-Shirt for Men', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Traditional Kurta Set', WEARABLE_KEYWORDS)).toBe(true);
   });
 
-  it('should not detect non-clothing products', () => {
-    expect(isClothingProduct('iPhone 15 Pro Max', CLOTHING_KEYWORDS)).toBe(false);
-    expect(isClothingProduct('Samsung TV 55 inch', CLOTHING_KEYWORDS)).toBe(false);
-    expect(isClothingProduct('Laptop Stand Aluminum', CLOTHING_KEYWORDS)).toBe(false);
+  it('should detect footwear products', () => {
+    expect(isClothingProduct('Nike Running Shoes', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Women Heels Gold', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Leather Sandals', WEARABLE_KEYWORDS)).toBe(true);
+  });
+
+  it('should detect eyewear products', () => {
+    expect(isClothingProduct('Ray-Ban Sunglasses', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Reading Spectacles', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Blue Light Glasses', WEARABLE_KEYWORDS)).toBe(true);
+  });
+
+  it('should detect jewelry and watches', () => {
+    expect(isClothingProduct('Gold Necklace Set', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Diamond Earrings', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Casio Digital Watch', WEARABLE_KEYWORDS)).toBe(true);
+  });
+
+  it('should detect accessories', () => {
+    expect(isClothingProduct('Leather Belt Brown', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Silk Tie Blue', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Baseball Cap', WEARABLE_KEYWORDS)).toBe(true);
+  });
+
+  it('should not detect non-wearable products without wearable keywords', () => {
+    expect(isClothingProduct('iPhone 15 Pro Max', WEARABLE_KEYWORDS)).toBe(false);
+    expect(isClothingProduct('Samsung TV 55 inch', WEARABLE_KEYWORDS)).toBe(false);
+    expect(isClothingProduct('Kitchen Mixer Grinder', WEARABLE_KEYWORDS)).toBe(false);
+    expect(isClothingProduct('USB Cable 2m', WEARABLE_KEYWORDS)).toBe(false);
+  });
+
+  it('should detect compound wearable words', () => {
+    expect(isClothingProduct('Trackpants for Men', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Sweatpants Grey', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Shortsleeve Underscrub', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('Sweatshirt Hoodie', WEARABLE_KEYWORDS)).toBe(true);
   });
 
   it('should be case insensitive', () => {
-    expect(isClothingProduct('MENS SHIRT', CLOTHING_KEYWORDS)).toBe(true);
-    expect(isClothingProduct('JEANS FOR WOMEN', CLOTHING_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('MENS SHIRT', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('JEANS FOR WOMEN', WEARABLE_KEYWORDS)).toBe(true);
+    expect(isClothingProduct('SUNGLASSES AVIATOR', WEARABLE_KEYWORDS)).toBe(true);
   });
 });
 

@@ -109,6 +109,13 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 24px;
+  width: 100%;
+}
+
+.tryon-column {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .tryon-column h3 {
@@ -120,7 +127,10 @@
 }
 
 .tryon-image-box {
-  aspect-ratio: 3/4;
+  width: 100%;
+  height: 320px;
+  min-height: 320px;
+  max-height: 320px;
   border: 2px dashed #d1d5db;
   border-radius: 12px;
   overflow: hidden;
@@ -130,6 +140,7 @@
   background: #f9fafb;
   cursor: pointer;
   transition: all 0.2s;
+  box-sizing: border-box;
 }
 
 .tryon-image-box:hover {
@@ -138,8 +149,10 @@
 }
 
 .tryon-image-box img {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
 }
 
@@ -305,6 +318,47 @@
   color: #dc2626;
   font-size: 14px;
   text-align: center;
+}
+
+/* Flipkart-specific Button Styles */
+.tryon-wrapper-flipkart {
+  display: flex !important;
+  width: 100% !important;
+  margin-top: 12px !important;
+  clear: both;
+}
+
+.tryon-now-button-flipkart {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 56px !important;
+  padding: 16px 24px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 2px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  box-sizing: border-box !important;
+}
+
+.tryon-now-button-flipkart:hover {
+  transform: none !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4) !important;
+  opacity: 0.95 !important;
+}
+
+.tryon-now-button-flipkart svg {
+  width: 20px !important;
+  height: 20px !important;
 }
 
 /* Responsive */

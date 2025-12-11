@@ -41,9 +41,37 @@ export async function generateTryOn(request: TryOnRequest): Promise<TryOnRespons
     console.log("Response status:", response.status);
 
     const data = await response.json();
+    
+    console.log("API Response data:", {
+      success: data.success,
+      hasImage: !!data.image,
+      imageLength: data.image?.length || 0,
+      imagePrefix: data.image?.substring(0, 50) || 'none',
+      error: data.error
+    });
 
     if (!response.ok) {
+      // Handle rate limit error specifically
+      if (response.status === 429) {
+        return { 
+          success: false, 
+          error: data.message || `Daily limit of ${data.current_count || 30} try-ons reached. Please try again tomorrow.`
+        };
+      }
       return { success: false, error: data.error || "Failed to generate try-on" };
+    }
+
+    // Validate the response has the expected structure
+    if (data.success && data.image) {
+      // Ensure the image is a valid data URL
+      if (!data.image.startsWith('data:')) {
+        console.error("Invalid image format - not a data URL");
+        return { success: false, error: "Invalid image format received from server" };
+      }
+      return data;
+    } else if (data.success && !data.image) {
+      console.error("Success but no image in response");
+      return { success: false, error: "No image was generated. Please try again." };
     }
 
     return data;
