@@ -91,10 +91,4 @@ TryOnNow/
 
 ---
 
-## 📜 License
-
-MIT License. Free for personal and educational use.
-
----
-
 **Made with ❤️ for hackathon**
